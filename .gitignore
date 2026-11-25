@@ -1,0 +1,11 @@
+.DS_Store
+*~
+*.log
+
+mac/QoderCoo.app/
+mac/build/
+
+windows/node_modules/
+windows/build/
+windows/dist/
+windows/tools/.cache/

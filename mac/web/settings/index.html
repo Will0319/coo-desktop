@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>QoderCoo 设置</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: linear-gradient(180deg, #f7f9ff 0%, #eef3ff 100%);
+    color: #232a44;
+    font: 13px/1.5 -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    -webkit-user-select: none; user-select: none;
+    overflow-y: auto;
+  }
+  [hidden] { display: none !important; }
+  .wrap { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; min-height: 100%; }
+  header { display: flex; align-items: center; gap: 10px; padding: 2px 2px 4px; }
+  header img { width: 42px; height: 42px; border-radius: 12px; background: #fff; box-shadow: 0 4px 12px rgba(61, 91, 240, .16); }
+  header .t { flex: 1; min-width: 0; }
+  header h1 { margin: 0; font-size: 17px; letter-spacing: .2px; }
+  header p { margin: 1px 0 0; font-size: 11.5px; color: #7a84a0; }
+  .card {
+    background: #fff; border: 1px solid #dfe7fb; border-radius: 14px;
+    padding: 12px 13px 13px; box-shadow: 0 2px 8px rgba(40, 62, 130, .05);
+  }
+  .card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .card-head h2 { margin: 0; font-size: 12.5px; font-weight: 600; color: #3a4566; flex: 1; letter-spacing: .3px; }
+  .link {
+    border: 0; background: none; padding: 0; cursor: pointer;
+    color: #4d6bfe; font: inherit; font-size: 11.5px;
+    -webkit-appearance: none; appearance: none;
+  }
+  .link:hover { text-decoration: underline; }
+  .link:focus { outline: none; }
+  .link:disabled { color: #9aa3bd; text-decoration: none; cursor: default; }
+  .seg { display: flex; gap: 3px; padding: 3px; background: #eef2fb; border: 1px solid #dfe7fb; border-radius: 11px; }
+  .seg button {
+    flex: 1; height: 30px; border: 0; border-radius: 8px; background: transparent;
+    color: #6b7490; font: inherit; font-size: 12px; cursor: pointer;
+  }
+  .seg button.active { background: #fff; color: #3d5bf0; font-weight: 600; box-shadow: 0 1px 4px rgba(40, 62, 130, .13); }
+  .seg button:disabled { opacity: .6; cursor: default; }
+  .note { margin-top: 8px; font-size: 11px; color: #8a93ad; min-height: 16px; }
+  .keyrow { display: flex; gap: 6px; margin-top: 2px; }
+  input[type=password], input[type=text] {
+    flex: 1; min-width: 0; height: 34px; padding: 0 10px;
+    border: 1px solid #d5def5; border-radius: 9px; outline: none;
+    font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: #232a44;
+    background: #fbfcff; transition: border-color .15s, box-shadow .15s;
+    -webkit-user-select: text; user-select: text;
+  }
+  input:focus { border-color: #8ba4ff; box-shadow: 0 0 0 3px rgba(77, 107, 254, .12); }
+  .icon-btn {
+    height: 34px; padding: 0 11px; border-radius: 9px; border: 1px solid #d5def5;
+    background: #fff; color: #5b6584; font: inherit; font-size: 11.5px; cursor: pointer; white-space: nowrap;
+  }
+  .icon-btn:hover { border-color: #b8c8f5; color: #3d5bf0; }
+  .row { display: flex; gap: 7px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
+  button.primary, button.ghost {
+    height: 31px; padding: 0 13px; border-radius: 9px; cursor: pointer; font: inherit; font-size: 12px;
+    border: 1px solid transparent; transition: filter .15s, background .15s;
+  }
+  button.primary { background: linear-gradient(135deg, #4d6bfe, #6f92ff); color: #fff; box-shadow: 0 4px 10px rgba(77, 107, 254, .25); }
+  button.primary:hover { filter: brightness(1.05); }
+  button.ghost { background: #fff; border-color: #d5def5; color: #4a5474; }
+  button.ghost:hover { border-color: #b8c8f5; color: #3d5bf0; }
+  button.danger { color: #b84a63; }
+  button:disabled { opacity: .55; cursor: default; filter: none; }
+  .console { margin-left: auto; }
+  .state { margin-top: 7px; font-size: 11.5px; min-height: 17px; color: #7a84a0; }
+  .state.ok { color: #1f9254; }
+  .state.err { color: #c2415d; margin-top: 0; }
+  .amount { font-size: 26px; font-weight: 700; color: #3d5bf0; letter-spacing: .3px; line-height: 1.15; margin: 1px 0 3px; }
+  .amount .cur { font-size: 12px; font-weight: 500; color: #8a93ad; margin-left: 6px; letter-spacing: 0; }
+  .amount.muted { font-size: 14px; font-weight: 500; color: #8a93ad; }
+  .amount.err { font-size: 13px; font-weight: 500; color: #c2415d; line-height: 1.45; }
+  .breakdown { font-size: 11.5px; color: #6f7892; min-height: 17px; }
+  .meta { font-size: 11px; color: #9aa3bd; margin-top: 2px; min-height: 15px; }
+  .check { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #4a5474; }
+  .check input { accent-color: #4d6bfe; }
+  .hint { margin-top: 5px; font-size: 10.5px; color: #9aa3bd; line-height: 1.45; }
+  footer { margin-top: auto; display: flex; align-items: center; gap: 9px; padding-top: 2px; }
+  footer .path { flex: 1; min-width: 0; font-size: 10.5px; color: #a0a9c1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="./head.png" alt="">
+    <div class="t">
+      <h1>QoderCoo</h1>
+      <p>数据源 · API Key · 刷新频率</p>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="card-head"><h2>数据源</h2></div>
+    <div class="seg" id="seg"></div>
+    <div class="note" id="sourceNote"></div>
+    <div id="keyBox" hidden>
+      <div class="keyrow">
+        <input id="key" type="password" placeholder="sk-…" spellcheck="false" autocomplete="off">
+        <button class="icon-btn" id="eye">显示</button>
+      </div>
+      <div class="row">
+        <button class="primary" id="save">保存并测试</button>
+        <button class="ghost" id="test">仅测试</button>
+        <button class="ghost danger" id="clear">清除</button>
+        <button class="link console" id="console">打开控制台</button>
+      </div>
+      <div class="state" id="keyState"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>当前余额</h2><button class="link" id="refresh">刷新</button></div>
+    <div class="amount muted" id="amount">正在读取…</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="meta" id="meta"></div>
+    <div class="state err" id="errLine"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>刷新</h2></div>
+    <label class="check"><input type="checkbox" id="auto"> 每 5 分钟自动刷新</label>
+    <div class="hint" id="autoHint"></div>
+  </section>
+
+  <footer>
+    <button class="link" id="folder">数据文件夹</button>
+    <span class="path" id="file"></span>
+    <button class="primary" id="done">完成</button>
+  </footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const post = msg => { try { webkit.messageHandlers.settings.postMessage(msg); } catch (e) {} };
+const money = (n, c) => (c === 'USD' ? '$' : '¥') + Number(n || 0).toFixed(2);
+const fmt = n => Number(n || 0).toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+
+let state = null;
+let busy = false;
+let lastAction = '';
+let keyStatus = null;
+let resultTimer = 0;
+let keyShown = false;
+let clearArm = 0;
+
+function disarmClear() {
+  clearTimeout(clearArm);
+  clearArm = 0;
+  $('clear').textContent = '清除';
+}
+
+function setKeyStatus(text, kind) {
+  keyStatus = text ? { text, kind: kind || '' } : null;
+  const el = $('keyState');
+  el.textContent = keyStatus ? keyStatus.text : '';
+  el.className = 'state' + (keyStatus && keyStatus.kind ? ' ' + keyStatus.kind : '');
+}
+
+function currentProvider() {
+  return ((state && state.providers) || []).find(p => p.id === state.provider) || {};
+}
+
+function renderSegments() {
+  const seg = $('seg');
+  seg.textContent = '';
+  for (const p of state.providers) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = p.credits ? p.title + ' 积分' : p.title;
+    b.className = p.id === state.provider ? 'active' : '';
+    b.disabled = busy;
+    b.addEventListener('click', () => {
+      if (busy || !state || p.id === state.provider) return;
+      disarmClear();
+      setKeyStatus(null);
+      $('key').value = '';
+      post({ type: 'selectProvider', provider: p.id });
+    });
+    seg.append(b);
+  }
+}
+
+function renderKey() {
+  const p = currentProvider();
+  const box = $('keyBox');
+  box.hidden = !!p.credits;
+  if (p.credits) return;
+  $('key').placeholder = p.hasKey ? '已保存 ' + p.mask + '，输入新 Key 可替换' : 'sk-…';
+  $('console').textContent = '打开 ' + p.title + ' 控制台';
+  if (keyStatus) {
+    $('keyState').textContent = keyStatus.text;
+    $('keyState').className = 'state' + (keyStatus.kind ? ' ' + keyStatus.kind : '');
+    return;
+  }
+  if (p.hasKey) setKeyStatus('已保存 ' + p.mask + ' · 只保存在本机 keys.json', 'ok');
+  else setKeyStatus('还没有保存 Key：填入后点“保存并测试”', '');
+}
+
+function renderBalance() {
+  const amount = $('amount'), breakdown = $('breakdown'), meta = $('meta');
+  amount.className = 'amount';
+  amount.textContent = '';
+  breakdown.textContent = '';
+  meta.textContent = '';
+  $('errLine').textContent = state.error || '';
+  $('refresh').textContent = state.refreshing ? '查询中…' : '刷新';
+  $('refresh').disabled = !!state.refreshing;
+
+  const b = state.balance;
+  if (!b) {
+    if (state.error) {
+      amount.className = 'amount err';
+      amount.textContent = state.error;
+      meta.textContent = '填入 Key 或换一个数据源后再试';
+      $('errLine').textContent = '';
+      return;
+    }
+    amount.className = 'amount muted';
+    amount.textContent = state.refreshing ? '正在查询…' : '尚未查询';
+    meta.textContent = state.refreshing ? '' : '点“刷新”，或点一下桌面上的她';
+    return;
+  }
+  if (b.kind === 'money') {
+    amount.append(document.createTextNode(money(b.amount, b.currency)));
+    const cur = document.createElement('span');
+    cur.className = 'cur';
+    cur.textContent = b.currency || 'CNY';
+    amount.append(cur);
+    const lines = (b.lines || []).slice();
+    if (b.available === false) lines.push('账户当前不可用');
+    breakdown.textContent = lines.join(' · ');
+    meta.textContent = '更新于 ' + (b.when || '');
+    return;
+  }
+  amount.append(document.createTextNode(fmt(b.remaining)));
+  const cur = document.createElement('span');
+  cur.className = 'cur';
+  cur.textContent = '/ ' + fmt(b.total) + ' 积分';
+  amount.append(cur);
+  const bits = ['已用 ' + fmt(b.used)];
+  if (b.reset) bits.push(b.reset);
+  if (Number(b.addOnRemaining) > 0) {
+    bits.push('附加积分 ' + fmt(b.addOnRemaining) + (Number(b.addOnTotal) > 0 ? ' / ' + fmt(b.addOnTotal) : ''));
+  }
+  breakdown.textContent = bits.join(' · ');
+  meta.textContent = '更新于 ' + (b.when || '');
+}
+
+function render() {
+  if (!state) return;
+  renderSegments();
+  $('sourceNote').textContent = currentProvider().note || '';
+  renderKey();
+  $('auto').checked = !!state.autoRefresh;
+  $('autoHint').textContent = state.autoRefresh
+    ? '每 5 分钟自动查询一次，会产生少量 API 调用。'
+    : '只在点击桌宠或点“刷新”时查询，最省 API 调用。';
+  $('file').textContent = 'keys.json · 只保存在本机';
+  $('file').title = state.keysFile || '';
+  renderBalance();
+}
+
+function beginBusy(action) {
+  if (busy) return false;
+  busy = true;
+  lastAction = action;
+  for (const id of ['save', 'test', 'clear']) $(id).disabled = true;
+  for (const b of document.querySelectorAll('.seg button')) b.disabled = true;
+  clearTimeout(resultTimer);
+  resultTimer = setTimeout(() => {
+    if (!busy) return;
+    endBusy();
+    setKeyStatus('请求超时，请检查网络后重试', 'err');
+  }, 25000);
+  return true;
+}
+
+function endBusy() {
+  busy = false;
+  clearTimeout(resultTimer);
+  for (const id of ['save', 'test', 'clear']) $(id).disabled = false;
+  for (const b of document.querySelectorAll('.seg button')) b.disabled = false;
+}
+
+window.settingsUI = {
+  apply(s) {
+    const switched = !state || state.provider !== s.provider;
+    state = s;
+    if (switched) {
+      disarmClear();
+      setKeyStatus(null);
+      $('key').value = '';
+    }
+    render();
+  },
+  result(r) {
+    endBusy();
+    if (r.cleared) {
+      $('key').value = '';
+      setKeyStatus('已清除本机保存的 API Key', '');
+      return;
+    }
+    if (lastAction === 'save') {
+      if (r.ok) {
+        $('key').value = '';
+        setKeyStatus('保存成功，接口验证通过 · 余额 ' + money(r.amount, r.currency), 'ok');
+      } else {
+        setKeyStatus('保存了，但查询失败：' + (r.error || '未知错误'), 'err');
+      }
+    } else if (lastAction === 'test') {
+      if (r.ok) setKeyStatus('接口可用 · 余额 ' + money(r.amount, r.currency), 'ok');
+      else setKeyStatus(r.error || '测试失败', 'err');
+    }
+  }
+};
+
+$('eye').addEventListener('click', () => {
+  keyShown = !keyShown;
+  $('key').type = keyShown ? 'text' : 'password';
+  $('eye').textContent = keyShown ? '隐藏' : '显示';
+});
+
+$('save').addEventListener('click', () => {
+  if (!beginBusy('save')) return;
+  setKeyStatus('正在验证…', '');
+  post({ type: 'saveKey', provider: state.provider, key: $('key').value });
+});
+
+$('test').addEventListener('click', () => {
+  if (!beginBusy('test')) return;
+  setKeyStatus('正在测试…', '');
+  post({ type: 'testKey', provider: state.provider, key: $('key').value });
+});
+
+$('clear').addEventListener('click', () => {
+  if (busy) return;
+  if (!clearArm) {
+    clearArm = setTimeout(disarmClear, 3000);
+    $('clear').textContent = '确认清除?';
+    return;
+  }
+  disarmClear();
+  if (!beginBusy('clear')) return;
+  setKeyStatus('正在清除…', '');
+  post({ type: 'clearKey', provider: state.provider });
+});
+
+$('key').addEventListener('input', () => {
+  if (!keyStatus) { keyStatus = null; return; }
+  keyStatus = null;
+  if (state) renderKey();
+});
+$('key').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('save').click();
+});
+
+$('auto').addEventListener('change', () => {
+  post({ type: 'setAutoRefresh', on: $('auto').checked });
+});
+
+$('refresh').addEventListener('click', () => {
+  if (state && state.refreshing) return;
+  post({ type: 'refresh', provider: state.provider });
+});
+
+$('console').addEventListener('click', () => {
+  if (state) post({ type: 'openConsole', provider: state.provider });
+});
+
+$('folder').addEventListener('click', () => post({ type: 'openFolder' }));
+$('done').addEventListener('click', () => post({ type: 'close' }));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') post({ type: 'close' }); });
+
+post({ type: 'ready' });
+</script>
+</body>
+</html>

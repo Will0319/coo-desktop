@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coo · DeepSeek</title>
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; }
+  body { -webkit-user-select: none; user-select: none; }
+  #stage { position: absolute; inset: 0; touch-action: none; }
+  #backSvg, #frontSvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  #backSvg { z-index: 1; }
+  #frontSvg { z-index: 3; }
+  #whaleLayer { position: absolute; inset: 0; overflow: visible; pointer-events: none; z-index: 2; }
+  .shadow { fill: #131b33; opacity: .16; }
+  #bubble {
+    position: absolute; z-index: 5; width: 240px; box-sizing: border-box; padding: 11px 14px 12px;
+    border-radius: 16px; transform: translate(-50%, -100%);
+    background: rgba(252, 253, 255, .97);
+    color: #1d2340; border: 1px solid rgba(104, 126, 186, .28);
+    box-shadow: 0 14px 34px rgba(20, 30, 70, .20), 0 2px 6px rgba(20, 30, 70, .08);
+    font: 12.5px/1.45 -apple-system, "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", sans-serif;
+    pointer-events: none; opacity: 0; transition: opacity .16s ease;
+  }
+  #bubble.show { opacity: 1; }
+  #bubble::after {
+    content: ""; position: absolute; left: 50%; bottom: -6px; width: 11px; height: 11px;
+    margin-left: -6px; background: rgba(252, 253, 255, .97); transform: rotate(45deg);
+    border-right: 1px solid rgba(104, 126, 186, .28); border-bottom: 1px solid rgba(104, 126, 186, .28);
+    border-radius: 0 0 2px 0;
+  }
+  .top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: .5px; color: #fff;
+    background: linear-gradient(135deg, #4d6bfe, #7aa2ff); padding: 2px 7px 2px 6px; border-radius: 6px;
+  }
+  .when { margin-left: auto; font-size: 10.5px; color: #8a93ad; }
+  .headline { font-size: 13px; color: #343c58; }
+  .headline b { font-size: 19px; font-weight: 700; color: #3d5bf0; letter-spacing: .2px; }
+  .headline .of { font-size: 11.5px; color: #8a93ad; }
+  .meter { height: 5px; margin: 7px 0 6px; border-radius: 3px; background: #e8ecf7; overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, #4d6bfe, #7fb4ff); transition: width .4s ease; }
+  .meta { font-size: 10.5px; color: #7b849e; display: flex; flex-wrap: wrap; gap: 2px 8px; }
+  .extra { font-size: 10.5px; color: #7b849e; margin-top: 2px; }
+  .extra:empty { display: none; }
+  .hint { font-size: 10.5px; color: #98a0b8; margin-top: 4px; }
+  .err { color: #c2415d; font-size: 12px; }
+  .pending { color: #5d6685; font-size: 12.5px; }
+  .pending::after { content: "…"; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="backSvg" aria-hidden="true">
+    <ellipse id="shadow" class="shadow" cx="0" cy="0" rx="0" ry="0"></ellipse>
+  </svg>
+  <div id="whaleLayer"></div>
+  <svg id="frontSvg" aria-hidden="true">
+    <g id="pet"></g>
+    <g id="fx"></g>
+  </svg>
+  <div id="bubble" hidden>
+    <div class="top"><span class="tag">DEEPSEEK</span><span class="when" id="when"></span></div>
+    <div class="headline" id="headline"></div>
+    <div class="meter" id="meter"><i id="fill"></i></div>
+    <div class="meta" id="meta"></div>
+    <div class="extra" id="extra"></div>
+    <div class="hint" id="hint"></div>
+  </div>
+</div>
+<script type="module" src="./stage.js"></script>
+</body>
+</html>
